@@ -24,6 +24,9 @@ export default class CheckTree extends React.Component {
     fieldNames: PropTypes.object,
     treeData: PropTypes.array.isRequired,
     checkedKeys: PropTypes.array,
+    theads: PropTypes.array,
+    leafs: PropTypes.number,
+    loading: PropTypes.bool,
   }
 
   initCheckedKeys = checkedKey => this.checkedKeys.push(checkedKey);

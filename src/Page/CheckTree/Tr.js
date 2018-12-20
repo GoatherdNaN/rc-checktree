@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import Checkbox from 'antd/lib/checkbox'
-import { DIRECTION, STATE } from './config'
+import { DIRECTION, STATE, INIT_PARENT_KEY } from './config'
 import {
   isUndefined,
   checkArrayHasValue,
@@ -40,6 +40,7 @@ export default class CheckTree extends Component {
     this.records = [];
     // 树形数据格式化成表格数据
     this.convertData(props.data);
+    console.log('/',this.dict);
     // 将状态树写入state
     this.state = {
       nodeStates: this.nodeStates
@@ -58,7 +59,7 @@ export default class CheckTree extends Component {
     return node => !!node[this.fieldNames.value];
   })()
   // 格式化树，使其平展成表格所需数据，并进行字典的初始化
-  convertData = (node, index = 0, parentKey = 0) => {
+  convertData = (node, index = 0, parentKey = INIT_PARENT_KEY) => {
     let { children } = node;
     let key = this.getNodeKey(node);
     // 初始化字典
@@ -73,9 +74,11 @@ export default class CheckTree extends Component {
     // 最后一级直接平铺数据
     else if(checkIsLastLeaf(currentLeaf + 1, this.leafs)) {
       this.records[currentLeaf] = children;
-      children.forEach((v, i) => this.initDict(v, i, this.getNodeKey(this.records[currentLeaf - 1])));
+      children.forEach((v, i) => this.initDict(v, i, key));
       this.addData();
-    } else {
+    } 
+    // 递归
+    else {
       children.forEach((v, i) => this.convertData(v, i, key));
     }
   }
@@ -89,10 +92,10 @@ export default class CheckTree extends Component {
       childKeys: [],
       checkedChildrenCount: 0,
       halfCheckedChildrenCount: 0,
-      leaf: parentKey ? this.dict[parentKey].leaf + 1 : 1,
+      leaf: parentKey !== INIT_PARENT_KEY ? this.dict[parentKey].leaf + 1 : 1,
     };
 
-    if(parentKey !== 0) {
+    if(parentKey !== INIT_PARENT_KEY) {
       this.dict[parentKey].childKeys.push(key);
       if(this.getNodeValue(node)) {
         // 原始树中包含节点状态时，初始化checkedKeys
@@ -166,7 +169,7 @@ export default class CheckTree extends Component {
   // 选中后改变值
   changeState = (key, state, direction) => {
     const { parentKey, childKeys } = this.dict[key];
-    let hasParent = parentKey !== 0;
+    let hasParent = parentKey !== INIT_PARENT_KEY;
     let currentState = this.nodeStates[key];
     if(state === STATE.checked) {
       if(currentState === STATE.unchecked) {
@@ -198,7 +201,7 @@ export default class CheckTree extends Component {
     // 若是传递过程中的传递，则只需要方向（direction）指向上下其中一个就行了
     let isUpwardMode = !direction || direction === DIRECTION.UPWARD_MODE;
     let isDownwardMode = !direction || direction === DIRECTION.DOWNWARD_MODE;
-    if(isUpwardMode && parentKey) {
+    if(isUpwardMode && parentKey !== INIT_PARENT_KEY) {
       this.handlePreChange(parentKey, state);
     }
     if(isDownwardMode && childKeys.length) {
@@ -213,6 +216,7 @@ export default class CheckTree extends Component {
       childKeys 
     } = this.dict[key];
     let currentState = this.nodeStates[key];
+    // 初始化时的处理
     if(childState === STATE.halfChecked && currentState !== STATE.halfChecked) {
       this.changeState(key, STATE.halfChecked, DIRECTION.UPWARD_MODE);
       return;
@@ -245,16 +249,17 @@ export default class CheckTree extends Component {
             Object.values(item).map((currentLeafItem, i) => {
               const currentLeaf = i + 1;
               const isLastLeaf = currentLeaf === this.leafs;
-
+              // 层级不够的用空格子占满
               if(isUndefined(currentLeafItem)) {
                 return <td key={`null_td_${i}`}></td>;
               }
+
               let key = isLastLeaf ? '' : this.getNodeKey(currentLeafItem);
+              // 合并行配置
               const isNeedRowSpan = (
                 checkIsNeedRowSpan(currentLeaf, this.leafs) && 
                 !!(this.dict[key].rowSpan - 1)
               );
-              
               if(
                 (isNeedRowSpan && this.dict[key].firstLocation !== index) ||
                 (isLastLeaf && !checkArrayHasValue(currentLeafItem))
@@ -264,6 +269,7 @@ export default class CheckTree extends Component {
               const rowSpanConfig = isNeedRowSpan ? { 
                 rowSpan: this.dict[key].rowSpan 
               } : {};
+
               return (
                 <td 
                   key={`LEAF_${i}`}
