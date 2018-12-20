@@ -142,7 +142,7 @@ childKeys.forEach(childKey => {
 treeData | 节点树(必填) | Array
 checkedKeys | 选中复选框的树节点(如果treeData中不含state时，用此数据初始化选中) | Array
 theads | 表头(注意表头数组长度和最大层级要对应) | Array
-leafs | 最大层级(与theads至少要传入一样，以确定最大层级) | Array
+leafs | 最大层级(与theads至少要传入一个，以确定最大层级) | Number
 loading | 数据加载状态 | Boolean
 fieldNames | treeData中的字段值 | Object
 onChange | 树节点状态变化时触发 | Function
