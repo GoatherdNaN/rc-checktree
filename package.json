@@ -16,7 +16,7 @@
     "react-scripts": "2.1.1"
   },
   "scripts": {
-    "start": "cross-env LEAFS=7 node ./format.js && react-scripts start",
+    "start": "cross-env LEAFS=5 node ./format.js && react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",

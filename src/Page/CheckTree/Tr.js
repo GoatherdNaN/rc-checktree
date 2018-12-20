@@ -40,7 +40,6 @@ export default class CheckTree extends Component {
     this.records = [];
     // 树形数据格式化成表格数据
     this.convertData(props.data);
-    console.log('/',this.dict);
     // 将状态树写入state
     this.state = {
       nodeStates: this.nodeStates
@@ -48,7 +47,7 @@ export default class CheckTree extends Component {
     // 释放无用值
     this.records = null;
   }
-  
+
   getNodeKey = node => node[this.fieldNames.key];
   // 获取节点选中状态，惰性函数写法
   getNodeValue = (() => {
@@ -76,7 +75,7 @@ export default class CheckTree extends Component {
       this.records[currentLeaf] = children;
       children.forEach((v, i) => this.initDict(v, i, key));
       this.addData();
-    } 
+    }
     // 递归
     else {
       children.forEach((v, i) => this.convertData(v, i, key));
@@ -141,7 +140,7 @@ export default class CheckTree extends Component {
     });
     this.tableList.push(trData);
   }
-  
+
   // 单条数据构建
   changRecord = (currentLeaf, newValue) => {
     this.records.length = currentLeaf - 1;
@@ -175,18 +174,18 @@ export default class CheckTree extends Component {
       if(currentState === STATE.unchecked) {
         hasParent && (this.dict[parentKey].checkedChildrenCount += 1);
         this.addKeyToChangedKeys(key);
-      } 
+      }
       else {
         hasParent && (this.dict[parentKey].halfCheckedChildrenCount -= 1);
       }
-    } 
+    }
     else if(state === STATE.unchecked) {
       hasParent && (this.dict[parentKey].checkedChildrenCount -= 1);
       this.addKeyToChangedKeys(key);
       if(hasParent && currentState === STATE.halfChecked) {
         this.dict[parentKey].halfCheckedChildrenCount -= 1;
       }
-    } 
+    }
     else {
       hasParent && (this.dict[parentKey].halfCheckedChildrenCount += 1);
       if(currentState === STATE.unchecked) {
@@ -194,7 +193,7 @@ export default class CheckTree extends Component {
         this.addKeyToChangedKeys(key);
       }
     }
-    
+
     this.nodeStates[key] = state;
 
     // 若是勾选触发，则该节点上下节点都要传递一遍
@@ -210,10 +209,10 @@ export default class CheckTree extends Component {
   }
   // 向上传递勾选状态（选中、半选、取消选中）
   handlePreChange = (key, childState) => {
-    const { 
-      checkedChildrenCount, 
-      halfCheckedChildrenCount, 
-      childKeys 
+    const {
+      checkedChildrenCount,
+      halfCheckedChildrenCount,
+      childKeys
     } = this.dict[key];
     let currentState = this.nodeStates[key];
     // 初始化时的处理
@@ -223,10 +222,10 @@ export default class CheckTree extends Component {
     }
     if(!checkedChildrenCount) {
       this.changeState(key, STATE.unchecked, DIRECTION.UPWARD_MODE);
-    } 
+    }
     else if(checkedChildrenCount === childKeys.length && !halfCheckedChildrenCount){
       this.changeState(key, STATE.checked, DIRECTION.UPWARD_MODE);
-    } 
+    }
     else if(currentState !== STATE.halfChecked){
       this.changeState(key, STATE.halfChecked, DIRECTION.UPWARD_MODE);
     }
@@ -239,7 +238,7 @@ export default class CheckTree extends Component {
       }
     })
   }
-  
+
   render () {
     const { nodeStates } = this.state;
     return (
@@ -257,7 +256,7 @@ export default class CheckTree extends Component {
               let key = isLastLeaf ? '' : this.getNodeKey(currentLeafItem);
               // 合并行配置
               const isNeedRowSpan = (
-                checkIsNeedRowSpan(currentLeaf, this.leafs) && 
+                checkIsNeedRowSpan(currentLeaf, this.leafs) &&
                 !!(this.dict[key].rowSpan - 1)
               );
               if(
@@ -266,12 +265,12 @@ export default class CheckTree extends Component {
               ) {
                 return null;
               }
-              const rowSpanConfig = isNeedRowSpan ? { 
-                rowSpan: this.dict[key].rowSpan 
+              const rowSpanConfig = isNeedRowSpan ? {
+                rowSpan: this.dict[key].rowSpan
               } : {};
 
               return (
-                <td 
+                <td
                   key={`LEAF_${i}`}
                   className={isLastLeaf ? 'lastLeaf' : ''}
                   {...rowSpanConfig}

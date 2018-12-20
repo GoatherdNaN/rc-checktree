@@ -88,10 +88,10 @@ export default class CheckTree extends React.Component {
         <tbody>
           {
             checkArrayHasValue(treeData) ? treeData.map((item, index) => (
-              <Tr 
+              <Tr
                 {...otherProps}
-                key={`TREE_KEY_${index}`} 
-                leafs={$leafs} 
+                key={`TREE_KEY_${index}`}
+                leafs={$leafs}
                 data={item}
                 initCheckedKeys={this.initCheckedKeys}
                 onChange={this.handleChange} />
@@ -107,5 +107,5 @@ export default class CheckTree extends React.Component {
       </table>
     )
   }
-  
+
 }

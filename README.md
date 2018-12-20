@@ -98,10 +98,10 @@ if(isDownwardMode && childKeys.length) {
 
 ```
 // fun: handlePreChange()
-const { 
-    checkedChildrenCount, 
-    halfCheckedChildrenCount, 
-    childKeys 
+const {
+    checkedChildrenCount,
+    halfCheckedChildrenCount,
+    childKeys
 } = this.dict[key];
 let currentState = this.nodeStates[key];
 // 初始化时的处理
@@ -113,7 +113,7 @@ if(childState === STATE.halfChecked && currentState !== STATE.halfChecked) {
 // 子节点没有选中的，此时父节点取消选中
 if(!checkedChildrenCount) {
     this.changeState(key, STATE.unchecked, DIRECTION.UPWARD_MODE);
-} 
+}
 // 子节点全选中，但没有半选状态的子节点，此时父节点变为选中
 else if(checkedChildrenCount === childKeys.length && !halfCheckedChildrenCount){
     this.changeState(key, STATE.checked, DIRECTION.UPWARD_MODE);
@@ -182,5 +182,5 @@ npm start
 
 ```
 <!--LEAFS可更改，来生成自定义层级的模拟数据，默认为5层，最小为2，最大看个人电脑性能-->
-"start": "cross-env LEAFS=7 node ./format.js && react-scripts start",
+"start": "cross-env LEAFS=5 node ./format.js && react-scripts start",
 ```
