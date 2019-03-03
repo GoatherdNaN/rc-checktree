@@ -184,3 +184,6 @@ npm start
 <!--LEAFS可更改，来生成自定义层级的模拟数据，默认为5层，最小为2，最大看个人电脑性能-->
 "start": "cross-env LEAFS=5 node ./format.js && react-scripts start",
 ```
+## 待优化项
+1. 递归算法用迭代替换
+2. 将change时比较变更的数据结构由数组变为Set
